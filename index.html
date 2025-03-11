@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoJSON with Labels & Distance Measurement</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.29/"></script>
+    <style>
+        html, body, #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="viewDiv"></div>
+
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/GeoJSONLayer",
+            "esri/widgets/DistanceMeasurement2D"
+        ], function(Map, MapView, GeoJSONLayer, DistanceMeasurement2D) {
+
+            // Initialize the map
+            const map = new Map({
+                basemap: "topo-vector"
+            });
+
+            // Set up the MapView
+            const view = new MapView({
+                container: "viewDiv",
+                map: map,
+                center: [47.4701,-23.2663], // Center at longitude 0, latitude 0
+                zoom: 9
+            });
+
+            // Load GeoJSON Layer
+            const geojsonLayer = new GeoJSONLayer({
+                url: "./localites.geojson", // Replace with your GeoJSON file URL
+                renderer: {
+                    type: "simple",
+                    symbol: {
+                        type: "simple-marker",
+                        color: "red",
+                        size: 8,
+                        outline: {
+                            color: "black",
+                            width: 1
+                        }
+                    }
+                },
+                labelingInfo: [{
+                    symbol: {
+                        type: "text",
+                        color: "blue",
+                        haloColor: "white",
+                        haloSize: 1,
+                        font: {
+                            size: 12,
+                            weight: "bold"
+                        }
+                    },
+                    labelExpressionInfo: {
+                        expression: "$feature.attributes.NOM_LOCA" // Change "name" to your field in the GeoJSON
+                    },
+                    labelPlacement: "above-right"
+                }],
+                outFields: ["*"] // Ensures that all attributes are loaded for labeling
+            });
+
+            map.add(geojsonLayer);
+
+            // Add Distance Measurement Widget
+            const measurementWidget = new DistanceMeasurement2D({
+                view: view
+            });
+
+            view.ui.add(measurementWidget, "top-right");
+        });
+    </script>
+
+</body>
+</html>
