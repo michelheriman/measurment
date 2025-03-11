@@ -43,6 +43,10 @@
             // Load GeoJSON Layer
             const geojsonLayer = new GeoJSONLayer({
                 url: "./localites.geojson", // Replace with your GeoJSON file URL
+                popupTemplate: {
+                title: "{NOM_LOCA}", // Attribute from GeoJSON
+                content: "Type: {type}<br>Coordinates: {geometry.coordinates}"
+                },
                 renderer: {
                     type: "simple",
                     symbol: {
